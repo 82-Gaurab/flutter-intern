@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:my_app/feature/dashboard/dashboard_screen.dart';
+import 'package:my_app/core/widget/common/bottom_navigation_bar.dart';
 import 'package:my_app/feature/onboarding/third_onboarding_screen.dart';
 
 class SecondOnboardingScreen extends StatelessWidget {
@@ -53,7 +53,7 @@ class SecondOnboardingScreen extends StatelessWidget {
                   onPressed: () {
                     Navigator.push(
                       context,
-                      MaterialPageRoute(builder: (_) => DashboardScreen()),
+                      MaterialPageRoute(builder: (_) => NavigationBarScreen()),
                     );
                   },
                   child: Text("Skip", style: TextStyle(fontSize: 16)),

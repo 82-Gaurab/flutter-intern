@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:my_app/feature/dashboard/dashboard_screen.dart';
+import 'package:my_app/core/widget/common/bottom_navigation_bar.dart';
 
 class ThirdOnboardingScreen extends StatelessWidget {
   const new({super.key});
@@ -33,7 +33,7 @@ class ThirdOnboardingScreen extends StatelessWidget {
                   onPressed: () {
                     Navigator.push(
                       context,
-                      MaterialPageRoute(builder: (_) => DashboardScreen()),
+                      MaterialPageRoute(builder: (_) => NavigationBarScreen()),
                     );
                   },
                   child: Text(
