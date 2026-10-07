@@ -1,9 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:my_app/feature/onboarding/first_onboarding_screen.dart';
 
-class SplashScreen extends StatelessWidget {
+class SplashScreen extends StatefulWidget {
   const new({super.key});
 
+  @override
+  State<SplashScreen> createState() => _SplashScreenState();
+}
+
+class _SplashScreenState extends State<SplashScreen> {
   @override
   Widget build(BuildContext context) {
     return SafeArea(
@@ -22,14 +27,28 @@ class SplashScreen extends StatelessWidget {
                 style: TextStyle(fontSize: 18),
               ),
 
-              TextButton(
-                onPressed: () {
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(builder: (_) => FirstOnboardingScreen()),
-                  );
-                },
-                child: Text("Next"),
+              SizedBox(height: 55),
+
+              SizedBox(
+                width: MediaQuery.of(context).size.width * 0.8,
+                height: 45,
+                child: ElevatedButton(
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: Color(0xAAff7622),
+                  ),
+                  onPressed: () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (_) => FirstOnboardingScreen(),
+                      ),
+                    );
+                  },
+                  child: Text(
+                    "Next",
+                    style: TextStyle(color: Colors.white, fontSize: 16),
+                  ),
+                ),
               ),
             ],
           ),
