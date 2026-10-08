@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:my_app/feature/onboarding/first_onboarding_screen.dart';
+import 'package:my_app/feature/onboarding/onboarding_screens.dart';
 
 class SplashScreen extends StatefulWidget {
   const new({super.key});
@@ -39,9 +39,7 @@ class _SplashScreenState extends State<SplashScreen> {
                   onPressed: () {
                     Navigator.push(
                       context,
-                      MaterialPageRoute(
-                        builder: (_) => FirstOnboardingScreen(),
-                      ),
+                      MaterialPageRoute(builder: (_) => OnboardingScreens()),
                     );
                   },
                   child: Text(
