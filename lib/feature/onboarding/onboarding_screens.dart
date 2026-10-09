@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:my_app/core/widget/common/bottom_navigation_bar.dart';
+import 'package:my_app/feature/auth/presentation/screens/login_screen.dart';
 import 'package:my_app/feature/onboarding/onboard_item.dart';
 import 'package:my_app/feature/onboarding/onboard_item_widget.dart';
 
@@ -47,7 +47,7 @@ class _OnboardingScreensState extends State<OnboardingScreens> {
     } else {
       Navigator.pushReplacement(
         context,
-        MaterialPageRoute(builder: (_) => NavigationBarScreen()),
+        MaterialPageRoute(builder: (_) => LoginScreen()),
       );
     }
   }
@@ -119,9 +119,7 @@ class _OnboardingScreensState extends State<OnboardingScreens> {
                           onPressed: () {
                             Navigator.pushReplacement(
                               context,
-                              MaterialPageRoute(
-                                builder: (_) => NavigationBarScreen(),
-                              ),
+                              MaterialPageRoute(builder: (_) => LoginScreen()),
                             );
                           },
                           child: Text("Skip", style: TextStyle(fontSize: 16)),
