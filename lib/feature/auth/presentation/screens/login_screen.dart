@@ -1,23 +1,33 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:my_app/core/di/dependency_injector.dart';
 import 'package:my_app/core/widget/common/bottom_navigation_bar.dart';
-import 'package:my_app/feature/auth/data/datasources/remote/auth_remote_datasource.dart';
-import 'package:my_app/feature/auth/data/repositories/auth_repo_iml.dart';
-import 'package:my_app/feature/auth/domain/usecases/login_usecase.dart';
+import 'package:my_app/feature/auth/presentation/bloc/auth_cubit.dart';
 import 'package:my_app/feature/auth/presentation/screens/register_screen.dart';
 
-class LoginScreen extends StatefulWidget {
-  const LoginScreen({super.key});
+class LoginScreen extends StatelessWidget {
+  const new({super.key});
 
   @override
-  State<LoginScreen> createState() => _LoginScreenState();
+  Widget build(BuildContext context) {
+    return BlocProvider(
+      create: (context) => getIt<AuthCubit>(),
+      child: LoginView(),
+    );
+  }
 }
 
-class _LoginScreenState extends State<LoginScreen> {
+class LoginView extends StatefulWidget {
+  const LoginView({super.key});
+
+  @override
+  State<LoginView> createState() => _LoginViewState();
+}
+
+class _LoginViewState extends State<LoginView> {
   final TextEditingController emailController = TextEditingController();
 
   final TextEditingController passwordController = TextEditingController();
-
-  late final LoginUsecase loginUsecase;
 
   bool obscurePassword = true;
   bool isLoading = false;
@@ -25,18 +35,14 @@ class _LoginScreenState extends State<LoginScreen> {
   @override
   void initState() {
     super.initState();
-
-    // Initialize datasource, repository, and use case.
-    final datasource = AuthRemoteDatasource();
-    final repository = AuthRepoIml(datasource);
-
-    loginUsecase = LoginUsecase(authRepository: repository);
   }
 
   // Login user using the login use case.
   Future<void> login() async {
     final email = emailController.text.trim();
     final password = passwordController.text;
+
+    final authCubit = context.read<AuthCubit>();
 
     // Validate empty fields.
     if (email.isEmpty || password.isEmpty) {
@@ -50,47 +56,17 @@ class _LoginScreenState extends State<LoginScreen> {
       isLoading = true;
     });
 
-    try {
-      final result = await loginUsecase(
-        LoginUsecaseParams(email: email, password: password),
+    await authCubit.login(email, password);
+
+    setState(() {
+      isLoading = false;
+    });
+
+    if (mounted) {
+      Navigator.push(
+        context,
+        MaterialPageRoute(builder: (_) => NavigationBarScreen()),
       );
-
-      if (!mounted) return;
-
-      if (result != null) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(
-            content: Text('Login successful!'),
-            backgroundColor: Colors.green,
-          ),
-        );
-
-        Navigator.of(context)
-            .push(MaterialPageRoute(builder: (_) => NavigationBarScreen()));
-
-        // TODO: Navigate to HomeScreen after successful login.
-      } else {
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(
-            content: Text('Login failed. Please try again.'),
-            backgroundColor: Colors.red,
-          ),
-        );
-      }
-    } catch (e) {
-      if (!mounted) return;
-
-      final message = e.toString().replaceFirst('AuthException: ', '');
-
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text(message), backgroundColor: Colors.red),
-      );
-    } finally {
-      if (mounted) {
-        setState(() {
-          isLoading = false;
-        });
-      }
     }
   }
 
