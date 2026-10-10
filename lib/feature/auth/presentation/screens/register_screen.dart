@@ -1,23 +1,32 @@
 import 'package:flutter/material.dart';
-import 'package:my_app/feature/auth/data/datasources/remote/auth_remote_datasource.dart';
-import 'package:my_app/feature/auth/data/repositories/auth_repo_iml.dart';
-
-import 'package:my_app/feature/auth/domain/usecases/register_usecase.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:my_app/core/di/dependency_injector.dart';
+import 'package:my_app/feature/auth/presentation/bloc/auth_cubit.dart';
 import 'package:my_app/feature/auth/presentation/screens/login_screen.dart';
 
-class RegisterScreen extends StatefulWidget {
-  const RegisterScreen({super.key});
+class RegisterScreen extends StatelessWidget {
+  const new({super.key});
 
   @override
-  State<RegisterScreen> createState() => _RegisterScreenState();
+  Widget build(BuildContext context) {
+    return BlocProvider(
+      create: (context) => getIt<AuthCubit>(),
+      child: RegisterView(),
+    );
+  }
 }
 
-class _RegisterScreenState extends State<RegisterScreen> {
+class RegisterView extends StatefulWidget {
+  const RegisterView({super.key});
+
+  @override
+  State<RegisterView> createState() => _RegisterViewState();
+}
+
+class _RegisterViewState extends State<RegisterView> {
   final TextEditingController nameController = TextEditingController();
   final TextEditingController emailController = TextEditingController();
   final TextEditingController passwordController = TextEditingController();
-
-  late final RegisterUsecase registerUsecase;
 
   bool obscurePassword = true;
   bool isLoading = false;
@@ -25,12 +34,6 @@ class _RegisterScreenState extends State<RegisterScreen> {
   @override
   void initState() {
     super.initState();
-
-    // Initialize datasource, repository, and use case.
-    final datasource = AuthRemoteDatasource();
-    final repository = AuthRepoIml(datasource);
-
-    registerUsecase = RegisterUsecase(authRepository: repository);
   }
 
   // Register user using the register use case.
@@ -38,6 +41,8 @@ class _RegisterScreenState extends State<RegisterScreen> {
     final username = nameController.text.trim();
     final email = emailController.text.trim();
     final password = passwordController.text;
+
+    final authCubit = context.read<AuthCubit>();
 
     // Validate empty fields.
     if (username.isEmpty || email.isEmpty || password.isEmpty) {
@@ -51,48 +56,14 @@ class _RegisterScreenState extends State<RegisterScreen> {
       isLoading = true;
     });
 
-    try {
-      final result = await registerUsecase(
-        RegisterUsecaseParams(
-          username: username,
-          email: email,
-          password: password,
-        ),
-      );
+    await authCubit.register(username, email, password);
 
-      if (!mounted) return;
+    setState(() {
+      isLoading = false;
+    });
 
-      if (result != null) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(
-            content: Text('Account created successfully!'),
-            backgroundColor: Colors.green,
-          ),
-        );
-
-        // TODO: Navigate to LoginScreen or HomeScreen.
-      } else {
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(
-            content: Text('Registration failed. Please try again.'),
-            backgroundColor: Colors.red,
-          ),
-        );
-      }
-    } catch (e) {
-      if (!mounted) return;
-
-      final message = e.toString().replaceFirst('AuthException: ', '');
-
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text(message), backgroundColor: Colors.red),
-      );
-    } finally {
-      if (mounted) {
-        setState(() {
-          isLoading = false;
-        });
-      }
+    if (mounted) {
+      Navigator.push(context, MaterialPageRoute(builder: (_) => LoginScreen()));
     }
   }
 
