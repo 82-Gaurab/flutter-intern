@@ -1,4 +1,5 @@
 import 'package:get_it/get_it.dart';
+import 'package:my_app/core/services/storage/user_session_service.dart';
 import 'package:my_app/feature/auth/data/datasources/auth_datasource.dart';
 import 'package:my_app/feature/auth/data/datasources/remote/auth_remote_datasource.dart';
 import 'package:my_app/feature/auth/data/repositories/auth_repo_iml.dart';
@@ -7,12 +8,23 @@ import 'package:my_app/feature/auth/domain/usecases/login_usecase.dart';
 import 'package:my_app/feature/auth/domain/usecases/register_usecase.dart';
 import 'package:my_app/feature/auth/presentation/auth_state.dart';
 import 'package:my_app/feature/auth/presentation/bloc/auth_cubit.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 final getIt = GetIt.instance;
 
-Future<void> setUpDependencies() async {
+Future<void> setUpDependencies({required SharedPreferences preferences}) async {
+  // shared preferences
+  getIt.registerSingleton<SharedPreferences>(preferences);
+
+  // user session service
+  getIt.registerLazySingleton<UserSessionService>(
+    () => UserSessionService(sharedPreferences: getIt<SharedPreferences>()),
+  );
+
   // Data source
-  getIt.registerLazySingleton<IAuthDatasource>(() => AuthRemoteDatasource());
+  getIt.registerLazySingleton<IAuthDatasource>(
+    () => AuthRemoteDatasource(userSessionService: getIt<UserSessionService>()),
+  );
 
   // repository
   getIt.registerLazySingleton<IAuthRepository>(

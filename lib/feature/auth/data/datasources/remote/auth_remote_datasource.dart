@@ -1,9 +1,14 @@
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:my_app/core/services/storage/user_session_service.dart';
 import 'package:my_app/feature/auth/data/datasources/auth_datasource.dart';
 import 'package:my_app/feature/auth/data/models/auth_model.dart';
 
 class AuthRemoteDatasource implements IAuthDatasource {
   final FirebaseAuth _firebaseAuth = FirebaseAuth.instance;
+  final UserSessionService _userSessionService;
+
+  AuthRemoteDatasource({required UserSessionService userSessionService})
+    : _userSessionService = userSessionService;
 
   @override
   Future<AuthModel?> getCurrentUser() async {
@@ -49,6 +54,7 @@ class AuthRemoteDatasource implements IAuthDatasource {
   @override
   Future<bool> signout() async {
     await _firebaseAuth.signOut();
+    await _userSessionService.clearUserSession();
     return true;
   }
 
@@ -64,6 +70,12 @@ class AuthRemoteDatasource implements IAuthDatasource {
     if (firebaseUser == null) {
       return null;
     }
+
+    await _userSessionService.saveUserSession(
+      email: email,
+      userId: firebaseUser.uid,
+      username: firebaseUser.displayName!,
+    );
 
     return AuthModel(
       authId: firebaseUser.uid,
