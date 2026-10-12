@@ -1,5 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:my_app/feature/cart/cart_screen.dart';
 import 'package:my_app/feature/dashboard/dashboard_screen.dart';
+import 'package:my_app/feature/notifications/notification_screen.dart';
+import 'package:my_app/feature/profile/presentation/screens/profile_screen.dart';
 
 class NavigationBarScreen extends StatefulWidget {
   const new({super.key});
@@ -9,11 +12,23 @@ class NavigationBarScreen extends StatefulWidget {
 }
 
 class _NavigationBarScreenState extends State<NavigationBarScreen> {
+  int selectedIndx = 0;
+  List<Widget> lstScreens = [
+    const DashboardScreen(),
+    const NotificationScreen(),
+    const CartScreen(),
+    const ProfileScreen(),
+  ];
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       bottomNavigationBar: BottomNavigationBar(
         type: BottomNavigationBarType.fixed,
+        currentIndex: selectedIndx,
+        onTap: (value) => setState(() {
+          selectedIndx = value;
+        }),
         backgroundColor: Colors.white,
         items: [
           BottomNavigationBarItem(
@@ -26,11 +41,11 @@ class _NavigationBarScreenState extends State<NavigationBarScreen> {
               color: Colors.black54,
               size: 25,
             ),
-            label: "Home",
+            label: "Notifications",
           ),
           BottomNavigationBarItem(
             icon: Icon(Icons.shopping_bag, color: Colors.black54, size: 25),
-            label: "Home",
+            label: "Cart",
           ),
           BottomNavigationBarItem(
             label: "Profile",
@@ -38,7 +53,7 @@ class _NavigationBarScreenState extends State<NavigationBarScreen> {
           ),
         ],
       ),
-      body: DashboardScreen(),
+      body: lstScreens[selectedIndx],
     );
   }
 }
