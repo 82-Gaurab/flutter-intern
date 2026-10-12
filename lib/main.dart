@@ -4,14 +4,32 @@ import 'package:google_sign_in/google_sign_in.dart';
 import 'package:my_app/core/di/dependency_injector.dart';
 import 'package:my_app/feature/splash/splash_screen.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:talker_flutter/talker_flutter.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
-  await Firebase.initializeApp();
-  final sharedPref = await SharedPreferences.getInstance();
-  await GoogleSignIn.instance.initialize();
-  await setUpDependencies(preferences: sharedPref);
-  runApp(const MyApp());
+  final talker = TalkerFlutter.init();
+
+  try {
+    talker.info("Initializing application...");
+
+    await Firebase.initializeApp();
+    talker.info("Firebase initialized");
+
+    final sharedPref = await SharedPreferences.getInstance();
+    talker.info("Shared Preferences initialized");
+
+    await GoogleSignIn.instance.initialize();
+    talker.info("Google signin initialized");
+
+    await setUpDependencies(preferences: sharedPref, talker: talker);
+    talker.info("Dependencies initialized");
+
+    runApp(const MyApp());
+  } catch (e, stackTrace) {
+    talker.handle(e, stackTrace, "Application Initialization failed");
+    rethrow;
+  }
 }
 
 class MyApp extends StatelessWidget {

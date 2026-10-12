@@ -10,12 +10,18 @@ import 'package:my_app/feature/auth/domain/usecases/register_usecase.dart';
 import 'package:my_app/feature/auth/presentation/auth_state.dart';
 import 'package:my_app/feature/auth/presentation/bloc/auth_cubit.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:talker_flutter/talker_flutter.dart';
 
 final getIt = GetIt.instance;
 
-Future<void> setUpDependencies({required SharedPreferences preferences}) async {
+Future<void> setUpDependencies({
+  required SharedPreferences preferences,
+  required Talker talker,
+}) async {
   // shared preferences
   getIt.registerSingleton<SharedPreferences>(preferences);
+
+  getIt.registerSingleton<Talker>(talker);
 
   // user session service
   getIt.registerLazySingleton<UserSessionService>(
@@ -35,7 +41,7 @@ Future<void> setUpDependencies({required SharedPreferences preferences}) async {
 
   // repository
   getIt.registerLazySingleton<IAuthRepository>(
-    () => AuthRepoIml(getIt<IAuthDatasource>()),
+    () => AuthRepoIml(getIt<IAuthDatasource>(), getIt<Talker>()),
   );
 
   // use cases

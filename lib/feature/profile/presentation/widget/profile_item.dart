@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 
 class ProfileItem extends StatelessWidget {
   final String title;
+  final Color? backgroundColor;
+  final Color? textColor;
   final VoidCallback onTap;
   final IconData icon;
 
@@ -10,6 +12,8 @@ class ProfileItem extends StatelessWidget {
     required this.title,
     required this.icon,
     required this.onTap,
+    this.backgroundColor,
+    this.textColor,
   });
 
   @override
@@ -17,7 +21,7 @@ class ProfileItem extends StatelessWidget {
     return GestureDetector(
       onTap: onTap,
       child: Card(
-        color: Color(0xFFf0ebea),
+        color: backgroundColor ?? Color(0xFFf0ebea),
         child: Padding(
           padding: const EdgeInsets.all(8.0),
           child: Row(
@@ -29,7 +33,7 @@ class ProfileItem extends StatelessWidget {
                   color: (Color(0xfff0ebea)).withValues(alpha: 0.1),
                   borderRadius: BorderRadius.circular(12),
                 ),
-                child: Icon(icon, color: Colors.black54, size: 24),
+                child: Icon(icon, color: textColor ?? Colors.black54, size: 24),
               ),
               const SizedBox(width: 16),
               Expanded(
@@ -38,14 +42,14 @@ class ProfileItem extends StatelessWidget {
                   style: TextStyle(
                     fontSize: 16,
                     fontWeight: FontWeight.w600,
-                    color: Colors.black87,
+                    color: textColor ?? Colors.black87,
                   ),
                 ),
               ),
               Icon(
                 Icons.arrow_forward_ios_rounded,
                 size: 16,
-                color: Colors.black54,
+                color: textColor ?? Colors.black54,
               ),
             ],
           ),

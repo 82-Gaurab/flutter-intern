@@ -40,6 +40,18 @@ class AuthCubit extends Cubit<AuthState> {
     }
   }
 
+  Future<void> singOut() async {
+    emit(AuthState(status: AuthStatus.loading));
+    final user = await _authRepository.signout();
+    if (user) {
+      emit(AuthState(status: AuthStatus.unauthenticated));
+    } else {
+      emit(
+        AuthState(errorMsg: "Error Singing out user", status: AuthStatus.error),
+      );
+    }
+  }
+
   Future<void> signInWithGoogle() async {
     emit(AuthState(status: AuthStatus.loading));
     final user = await _authRepository.signInWithGoogle();
