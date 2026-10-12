@@ -70,6 +70,19 @@ class _LoginViewState extends State<LoginView> {
     }
   }
 
+  Future<void> signInWithGoogle() async {
+    final authCubit = context.read<AuthCubit>();
+
+    await authCubit.signInWithGoogle();
+
+    if (mounted) {
+      Navigator.push(
+        context,
+        MaterialPageRoute(builder: (_) => NavigationBarScreen()),
+      );
+    }
+  }
+
   Widget buildTextField({
     required TextEditingController controller,
     required String label,
@@ -231,6 +244,37 @@ class _LoginViewState extends State<LoginView> {
                           )
                         : const Text(
                             'Login',
+                            style: TextStyle(
+                              fontSize: 13,
+                              fontWeight: FontWeight.w700,
+                            ),
+                          ),
+                  ),
+                ),
+                SizedBox(
+                  height: 48,
+                  child: ElevatedButton(
+                    onPressed: isLoading ? null : signInWithGoogle,
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: const Color(0xFFFF4D00),
+                      foregroundColor: Colors.white,
+                      disabledBackgroundColor: const Color(0xFFFF4D00),
+                      elevation: 0,
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(25),
+                      ),
+                    ),
+                    child: isLoading
+                        ? const SizedBox(
+                            height: 20,
+                            width: 20,
+                            child: CircularProgressIndicator(
+                              color: Colors.white,
+                              strokeWidth: 2,
+                            ),
+                          )
+                        : const Text(
+                            'Sign In with Google',
                             style: TextStyle(
                               fontSize: 13,
                               fontWeight: FontWeight.w700,

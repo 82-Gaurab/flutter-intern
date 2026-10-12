@@ -1,5 +1,6 @@
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
+import 'package:google_sign_in/google_sign_in.dart';
 import 'package:my_app/core/di/dependency_injector.dart';
 import 'package:my_app/feature/splash/splash_screen.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -8,6 +9,7 @@ void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp();
   final sharedPref = await SharedPreferences.getInstance();
+  await GoogleSignIn.instance.initialize();
   await setUpDependencies(preferences: sharedPref);
   runApp(const MyApp());
 }

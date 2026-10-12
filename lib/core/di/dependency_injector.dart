@@ -1,4 +1,5 @@
 import 'package:get_it/get_it.dart';
+import 'package:google_sign_in/google_sign_in.dart';
 import 'package:my_app/core/services/storage/user_session_service.dart';
 import 'package:my_app/feature/auth/data/datasources/auth_datasource.dart';
 import 'package:my_app/feature/auth/data/datasources/remote/auth_remote_datasource.dart';
@@ -21,9 +22,15 @@ Future<void> setUpDependencies({required SharedPreferences preferences}) async {
     () => UserSessionService(sharedPreferences: getIt<SharedPreferences>()),
   );
 
+  // google sign in
+  getIt.registerLazySingleton<GoogleSignIn>(() => GoogleSignIn.instance);
+
   // Data source
   getIt.registerLazySingleton<IAuthDatasource>(
-    () => AuthRemoteDatasource(userSessionService: getIt<UserSessionService>()),
+    () => AuthRemoteDatasource(
+      userSessionService: getIt<UserSessionService>(),
+      googleSignIn: getIt<GoogleSignIn>(),
+    ),
   );
 
   // repository
@@ -45,6 +52,7 @@ Future<void> setUpDependencies({required SharedPreferences preferences}) async {
       AuthState(status: AuthStatus.initial),
       loginUsecase: getIt<LoginUsecase>(),
       registerUsecase: getIt<RegisterUsecase>(),
+      authRepository: getIt<IAuthRepository>(),
     ),
   );
 }

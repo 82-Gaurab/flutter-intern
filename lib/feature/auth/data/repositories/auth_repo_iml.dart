@@ -88,6 +88,17 @@ class AuthRepoIml implements IAuthRepository {
       throw _handleFirebaseError(e);
     }
   }
+
+  @override
+  Future<AuthEntity?> signInWithGoogle() async {
+    try {
+      final model = await datasource.signInWithGoogle();
+      if (model == null) return null;
+      return model.toEntity();
+    } on FirebaseAuthException catch (e) {
+      throw _handleFirebaseError(e);
+    }
+  }
 }
 
 class AuthException implements Exception {
