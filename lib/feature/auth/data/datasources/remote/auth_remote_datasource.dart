@@ -113,4 +113,48 @@ class AuthRemoteDatasource implements IAuthDatasource {
       return null;
     }
   }
+
+  @override
+  Future<AuthModel?> updateCredentials(
+    String? username,
+    String? email,
+    String? password,
+  ) async {
+    final user = _firebaseAuth.currentUser;
+
+    if (user == null) return null;
+
+    if (username != null && username.trim().isNotEmpty) {
+      await user.updateDisplayName(username);
+    }
+
+    if (email != null && email.trim().isNotEmpty) {
+      await user.verifyBeforeUpdateEmail(email);
+    }
+
+    if (password != null && password.trim().isNotEmpty) {
+      await user.updatePassword(password);
+    }
+
+    await user.reload();
+
+    final updatedUser = _firebaseAuth.currentUser;
+
+    if (updatedUser == null) return null;
+
+    await _userSessionService.clearUserSession();
+    await _userSessionService.saveUserSession(
+      userId: updatedUser.uid,
+      email: updatedUser.email!,
+      username: updatedUser.displayName!,
+    );
+
+    final model = AuthModel(
+      email: updatedUser.email!,
+      authId: updatedUser.uid,
+      username: updatedUser.displayName,
+    );
+
+    return model;
+  }
 }

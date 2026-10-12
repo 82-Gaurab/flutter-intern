@@ -5,5 +5,10 @@ abstract interface class IAuthDatasource {
   Future<AuthModel?> register(String username, String email, String password);
   Future<AuthModel?> getCurrentUser();
   Future<AuthModel?> signInWithGoogle();
+  Future<AuthModel?> updateCredentials(
+    String? username,
+    String? email,
+    String? password,
+  );
   Future<bool> signout();
 }

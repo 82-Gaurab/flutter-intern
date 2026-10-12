@@ -5,5 +5,10 @@ abstract interface class IAuthRepository {
   Future<AuthEntity?> signInWithGoogle();
   Future<AuthEntity?> register(String username, String email, String password);
   Future<AuthEntity?> getCurrentUser();
+  Future<AuthEntity?> updateCredentials(
+    String? username,
+    String? email,
+    String? password,
+  );
   Future<bool> signout();
 }

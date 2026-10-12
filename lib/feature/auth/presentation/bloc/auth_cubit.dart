@@ -30,6 +30,16 @@ class AuthCubit extends Cubit<AuthState> {
     }
   }
 
+  Future<void> getCurrentUser() async {
+    emit(AuthState(status: AuthStatus.loading));
+    final user = await _authRepository.getCurrentUser();
+    if (user != null) {
+      emit(AuthState(entity: user, status: AuthStatus.loaded));
+    } else {
+      emit(AuthState(errorMsg: "Error getting user", status: AuthStatus.error));
+    }
+  }
+
   Future<void> signInWithGoogle() async {
     emit(AuthState(status: AuthStatus.loading));
     final user = await _authRepository.signInWithGoogle();
@@ -53,6 +63,24 @@ class AuthCubit extends Cubit<AuthState> {
       emit(AuthState(entity: user, status: AuthStatus.registered));
     } else {
       emit(AuthState(errorMsg: "Error", status: AuthStatus.error));
+    }
+  }
+
+  Future<void> updateCredentials(
+    String? username,
+    String? email,
+    String? password,
+  ) async {
+    emit(AuthState(status: AuthStatus.loading));
+    final user = await _authRepository.updateCredentials(
+      username,
+      email,
+      password,
+    );
+    if (user != null) {
+      emit(AuthState(status: AuthStatus.loaded, entity: user));
+    } else {
+      emit(AuthState(errorMsg: "Error updating", status: AuthStatus.error));
     }
   }
 }

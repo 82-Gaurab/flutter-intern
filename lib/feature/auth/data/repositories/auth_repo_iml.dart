@@ -99,6 +99,25 @@ class AuthRepoIml implements IAuthRepository {
       throw _handleFirebaseError(e);
     }
   }
+
+  @override
+  Future<AuthEntity?> updateCredentials(
+    String? username,
+    String? email,
+    String? password,
+  ) async {
+    try {
+      final model = await datasource.updateCredentials(
+        username,
+        email,
+        password,
+      );
+      if (model == null) return null;
+      return model.toEntity();
+    } on FirebaseAuthException catch (e) {
+      throw _handleFirebaseError(e);
+    }
+  }
 }
 
 class AuthException implements Exception {
