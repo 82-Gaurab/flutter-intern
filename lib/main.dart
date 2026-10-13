@@ -2,7 +2,9 @@ import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:my_app/core/di/dependency_injector.dart';
+import 'package:my_app/core/notifications/notification_service.dart';
 import 'package:my_app/feature/splash/splash_screen.dart';
+import 'package:my_app/firebase_options.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:talker_flutter/talker_flutter.dart';
 
@@ -13,8 +15,13 @@ void main() async {
   try {
     talker.info("Initializing application...");
 
-    await Firebase.initializeApp();
+    await Firebase.initializeApp(
+      options: DefaultFirebaseOptions.currentPlatform,
+    );
     talker.info("Firebase initialized");
+
+    await NotificationService.initialize();
+    talker.info("Notification Service initialized");
 
     final sharedPref = await SharedPreferences.getInstance();
     talker.info("Shared Preferences initialized");

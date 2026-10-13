@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:my_app/core/di/dependency_injector.dart';
 import 'package:my_app/feature/auth/presentation/bloc/auth_cubit.dart';
-import 'package:my_app/feature/profile/presentation/screens/profile_screen.dart';
 
 class UpdateProfileScreen extends StatefulWidget {
   const new({super.key});
@@ -33,10 +32,17 @@ class _UpdateProfileScreenState extends State<UpdateProfileScreen> {
     await authCubit.updateCredentials(username, email, password);
 
     if (mounted) {
-      Navigator.pushReplacement(
-        context,
-        MaterialPageRoute(builder: (_) => ProfileScreen()),
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text(
+            'Update Successfull',
+            style: TextStyle(color: Colors.white),
+          ),
+
+          backgroundColor: Colors.green,
+        ),
       );
+      Navigator.pop(context);
     }
   }
 
